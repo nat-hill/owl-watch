@@ -12,8 +12,8 @@ function App() {
     <Router>
     <Navbar />
     <Routes>
-      <Route exact path='/' element={<Home />} />
-      <Route path='/clock' element={<Clock/>} />
+      <Route exact path='/' element={<Home/>} ></Route>
+      <Route exact path='/clock' element={<Clock/>} ></Route>
     </Routes>
     </Router>
   );
