@@ -61,6 +61,9 @@ router.route('/update/:id').post((req, res) => {
       User.password = req.body.password;
       User.gradeyear = req.body.gradeyear;
       User.classes = req.body.classes;
+
+
+      
       User.date = Date.parse(req.body.date);
 
       User.save()
@@ -71,7 +74,6 @@ router.route('/update/:id').post((req, res) => {
 });
 
 // What else can I add?
-
 
 
 
