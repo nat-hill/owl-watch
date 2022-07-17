@@ -52,7 +52,7 @@ router.route('/:id').delete((req, res) => {
 });
 
 
-// Updates any User's ID
+// Updates ALL of User's ID, need to pass all fields to work
 
 router.route('/update/:id').post((req, res) => {
   User.findById(req.params.id)
@@ -73,7 +73,25 @@ router.route('/update/:id').post((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
-// What else can I add?
+// update classes
+
+router.route('/update_classes/:id').post((req, res) => {
+  User.findById(req.params.id)
+    .then(User => {
+      
+      User.classes = req.body.classes;
+
+
+      
+      User.date = Date.parse(req.body.date);
+
+      User.save()
+        .then(() => res.json('User updated!'))
+        .catch(err => res.status(400).json('Error: ' + err));
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
 
 
 

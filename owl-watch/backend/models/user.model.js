@@ -2,6 +2,23 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const projectSchema = new Schema ({
+  projectName: {
+    type : String,
+
+  },
+  hoursSpent: {Number}
+})
+
+const classSchema = new Schema ({
+  className: String,
+  projects: {
+    type: [projectSchema],
+    required: false
+  },
+  timeSpent: Number
+})
+
 const userSchema = new Schema({
   username: {
     type: String,
@@ -15,17 +32,21 @@ const userSchema = new Schema({
   },
   gradeyear: { 
     type: String, 
-    required: true},
+    required: false},
   classes: 
-  { type: String, 
-    required: true },
+  { type: [classSchema], 
+    required: false },
   date: 
   { type: Date, 
-    required: true },
+    required: false },
 
 }, {
   timestamps: true,
 });
+
+
+
+
 
 const User = mongoose.model('User', userSchema);
 
