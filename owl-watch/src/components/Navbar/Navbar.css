@@ -16,13 +16,13 @@
 
 .nav-menu {
     display: grid;
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: repeat(4, auto);
     grid-gap: 10px;
     list-style: none;
     text-align: center;
-    width: 100vw;
-    justify-content: space-evenly;
-    margin-left: 0px;
+    width: 70vw;
+    justify-content: end;
+    margin-right: 2rem;
 }
 
 .nav-links {
