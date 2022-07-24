@@ -1,21 +1,48 @@
-import logo from './logo.svg';
 import './App.css';
 
+import Navbar from './Components/Navbar';
 
-import CreateProject from './routecomponents/CreateProject';
-import Navbar from './Components/Navbar'
+import Home from './pages/home';
+import Update from './pages/update';
+import Add from './pages/add';
+import About from './pages/about';
+import Contact from './pages/contact';
 //import { Router } from 'express';
 
 function App() {
-  return (
+  let component
+  switch (window.location.pathname) {
+      case "/":
+        component = <Home />
+        break
 
-        <div className="App">
-          <Navbar />
-          <header className="App-header">
-        
-               <CreateProject />
-           </header>
-        </div>
+      case "/update":
+        component = <Update />
+        break
+
+      case "/add":
+        component = <Add />
+        break
+
+      case "/about":
+        component = <About />
+        break
+
+      case "/contact":
+        component = <Contact />
+        break
+
+      default:
+  }
+
+
+  return (
+    <>
+    <Navbar />
+    <div className="container">
+    {component}
+    </div>
+    </>
       
 
         
