@@ -10,6 +10,11 @@ export const MenuItems = [
         cName: 'nav-links'
     },    
     {
+        title: 'Display Data',
+        url: '/display',
+        cName: 'nav-links'
+    },
+    {
         title: 'Become an Owl Watch User Today',
         url: '/add',
         cName: 'nav-links'

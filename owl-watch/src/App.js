@@ -1,7 +1,7 @@
 import './App.css';
 
 import Navbar from './Components/Navbar';
-
+import Display from './pages/display';
 import Home from './pages/home';
 import Update from './pages/update';
 import Add from './pages/add';
@@ -18,6 +18,10 @@ function App() {
 
       case "/update":
         component = <Update />
+        break
+
+      case "/display":
+        component = <Display />
         break
 
       case "/add":
