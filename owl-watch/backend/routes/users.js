@@ -36,8 +36,8 @@ router.route('/add').post((req, res) => {
 
 // Gets any User via _ID 
 
-router.route('/:id').get((req, res) => {
-  User.findById(req.params.id)
+router.route('/:userid').get((req, res) => {
+  User.findById(req.params.userid)
     .then(users => res.json(users))
     .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -45,8 +45,8 @@ router.route('/:id').get((req, res) => {
 
 //Deletes any User via _ID
 
-router.route('/:id').delete((req, res) => {
-  User.findByIdAndDelete(req.params.id)
+router.route('/:userid').delete((req, res) => {
+  User.findByIdAndDelete(req.params.userid)
     .then(() => res.json('User deleted.'))
     .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -54,8 +54,8 @@ router.route('/:id').delete((req, res) => {
 
 // Updates ALL of User's ID, need to pass all fields to work
 
-router.route('/update/:id').post((req, res) => {
-  User.findById(req.params.id)
+router.route('/update/:userid').post((req, res) => {
+  User.findById(req.params.userid)
     .then(User => {
       User.username = req.body.username;
       User.password = req.body.password;
@@ -75,15 +75,12 @@ router.route('/update/:id').post((req, res) => {
 
 // update classes
 
-router.route('/update_classes/:id').post((req, res) => {
-  User.findById(req.params.id)
+router.route('/update_classes/:userid').post((req, res) => {
+  User.findById(req.params.userid)
     .then(User => {
       
       User.classes = req.body.classes;
 
-
-      
-      User.date = Date.parse(req.body.date);
 
       User.save()
         .then(() => res.json('User updated!'))
@@ -93,17 +90,17 @@ router.route('/update_classes/:id').post((req, res) => {
 });
 
 
-///get classes by Id
+///get all classes by user id
 
-router.route('/get_classes/:id').get((req, res) => {
-  User.findById(req.params.id)
+router.route('/get_classes/:userid').get((req, res) => {
+  User.findById(req.params.userid)
   .then(users => res.json(users.classes))
   .catch(err => res.status(400).json('Error: ' + err));
 });
 
 
 // get projects in class by user and class id
-
+// returns [ProjectSchema]
 
 router.route('/get_projects/:userid/:classid').get((req, res) => {
   User.findById(req.params.userid)
@@ -113,8 +110,7 @@ router.route('/get_projects/:userid/:classid').get((req, res) => {
     for (let i = 0; i < subDocs.length; i++){
       if (subDocs[i].$parent() != undefined){
         if(subDocs[i].$parent()._id == req.params.classid){
-          const length = projects.length
-          projects[length] = subDocs[i]
+          projects[projects.length] = subDocs[i]
         }
       }
     }
@@ -123,6 +119,41 @@ router.route('/get_projects/:userid/:classid').get((req, res) => {
   .catch(err => res.status(400).json('Error: ' + err));
 });
 
+
+// get classes timeSpent 
+// returns [ [className1, timeSpent1], [className2, timeSpent2], ... ] 
+
+router.route('/get_classTime/:userid').get((req, res) => {
+  User.findById(req.params.userid)
+  .then(User => {
+    const classes = User.classes
+    const times = []
+    for(let i = 0; i < classes.length; i++){
+
+      times[times.length] = [classes[i].className, classes[i].timeSpent]
+
+    }
+    return res.json(times)
+  })
+  .catch(err => res.status(400).json('Error: ' + err));
+});
+
+//get class by user id and class id
+
+router.route('/get_class/:userid/:classid').get((req, res) => {
+  User.findById(req.params.userid)
+  .then(User => {
+    const classes = User.classes
+    for(let i = 0; i < classes.length; i++){
+      if(classes[i]._id == req.params.classid){
+        return res.json(classes[i])
+      }
+
+    }
+    
+  })
+  .catch(err => res.status(400).json('Error: ' + err));
+});
 
 
 
