@@ -102,6 +102,28 @@ router.route('/get_classes/:id').get((req, res) => {
 });
 
 
+// get projects in class by user and class id
+
+
+router.route('/get_projects/:userid/:classid').get((req, res) => {
+  User.findById(req.params.userid)
+  .then(User => {
+    const subDocs = User.$getAllSubdocs()
+    const projects = []
+    for (let i = 0; i < subDocs.length; i++){
+      if (subDocs[i].$parent() != undefined){
+        if(subDocs[i].$parent()._id == req.params.classid){
+          const length = projects.length
+          projects[length] = subDocs[i]
+        }
+      }
+    }
+    return res.json(projects)
+  })
+  .catch(err => res.status(400).json('Error: ' + err));
+});
+
+
 
 
 
