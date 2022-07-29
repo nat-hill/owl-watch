@@ -93,6 +93,16 @@ router.route('/update_classes/:id').post((req, res) => {
 });
 
 
+///get classes by Id
+
+router.route('/get_classes/:id').get((req, res) => {
+  User.findById(req.params.id)
+  .then(users => res.json(users.classes))
+  .catch(err => res.status(400).json('Error: ' + err));
+});
+
+
+
 
 
 module.exports = router;
