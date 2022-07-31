@@ -8,6 +8,11 @@ export const MenuItems = [
         title: 'Update Profile',
         url: '/update',
         cName: 'nav-links'
+    },
+    {
+        title: 'Display Data',
+        url: '/display',
+        cName: 'nav-links'
     },    
     {
         title: 'Become an Owl Watch User Today',
