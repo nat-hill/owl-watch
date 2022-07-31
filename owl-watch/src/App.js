@@ -5,6 +5,7 @@ import Navbar from './Components/Navbar';
 import Home from './pages/home';
 import Update from './pages/update';
 import Add from './pages/add';
+import Display from './Components/display-user.component.js';
 import About from './pages/about';
 import Contact from './pages/contact';
 //import { Router } from 'express';
@@ -23,7 +24,9 @@ function App() {
       case "/add":
         component = <Add />
         break
-
+      case "/display":
+        component = <Display />
+        break
       case "/about":
         component = <About />
         break
