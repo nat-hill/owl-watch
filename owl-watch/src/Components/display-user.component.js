@@ -3,36 +3,41 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Display from "../pages/display.js";
+//import User from "user.model.js"
+
+
 
 export default class DisplayUser extends Component {
     constructor(props) {
         super(props);
         this.myRef = React.createRef();
+        this.ref2 = React.createRef();
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeClass = this.onChangeClass.bind(this);
         this.onChangeDuration = this.onChangeDuration.bind(this);
         this.onChangeDate = this.onChangeDate.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onChangeProjectName = this.onChangeProjectName.bind(this);
+        this.onSubmitUser = this.onSubmitUser.bind(this)
 
         this.state = {
             username: '',
             class: '',
             duration: 0,
             date: new Date(),
-            users: []
+            users: [],
+            classes: [],
+            projectName: ''
         }
     }
 
 
     // TODO: fix so that the list of users is actually fetched so that it can eventually be used in dropdown menu
-    // TODO EVENTUALLY: remove because the username of the current user should be automatically understood after logging in (we haven't yet implememented log in feature)
+    // TODO EVENTUALLY: remove because the username of the current user should be automatically understood after 
+    // logging in (we haven't yet implememented log in feature)
     componentDidMount() {
-        /*
-        this.setState({
-            users: ['test user'],
-            username: 'test user'
-         })
-        */
+        
        
         axios.get('http://localhost:3002/users/')
           .then(response => {
@@ -45,18 +50,23 @@ export default class DisplayUser extends Component {
           })
           .catch((error) => {
             console.log(error);
-          })
-          
+          });
       }
 
     onChangeUsername(e) {
         this.setState({
             username: e.target.value
         });
+        
     }
     onChangeClass(e) {
         this.setState({
             class: e.target.value
+        });
+    }
+    onChangeProjectName(e) {
+        this.setState({
+            projectName: e.target.value
         });
     }
     onChangeDuration(e) {
@@ -64,9 +74,9 @@ export default class DisplayUser extends Component {
             duration: e.target.value
         });
     }
-    onChangeDate(e) {
+    onChangeDate(date) {
         this.setState({
-            date: e.target.value
+            date: date
         });
     }
 
@@ -77,26 +87,62 @@ export default class DisplayUser extends Component {
             username: this.state.username,
             class: this.state.class,
             duration: this.state.duration,
-            date: this.state.date
+            date: this.state.date,
+            projectName: this.state.projectName
         };
 
+        
+        
+
+            
+        
+        
         console.log(user);
+        
 
         // TODO set up a proper update_classes post request
-        /*
-        axios.post('http://localhost:3002/users/add', user)
-            .then(res => console.log(res.data));
-        */
+        
+        //axios.post('http://localhost:3002/users/update_classes/:userid', user)
+        //    .then(res => console.log(res.data));
+        
 
-        window.location = '/display';
+        //window.location = '/display';
+
+        this.setState({
+            username: '',
+            class: '',
+            duration:0,
+            date: ''
+        })
     }
 
-    //TODO EVENTUALLY: once log in is configured, class should be a dropdown menu of the classes that student is enrolled in
+    onSubmitUser(e){
+        e.preventDefault();
+        
+
+        axios.get('http://localhost:3002/users/username_classes/' + this.state.username)
+        .then(res =>{
+            
+            if (res.data.length > 0) {
+                console.log(res.data[0].className)
+                this.setState({
+                    classes: res.data.map(clas => clas.className),
+                    class: res.data[0].className
+                })
+                console.log("Class" + this.state.class);
+            }
+        })
+        .catch(err =>{
+            console.log(err)
+        });
+    }
+
+    
     //TODO EVENTUALLY: add stopwatch feature as well
     render() {
         return (
             <div>
-                <h3>Create New Work Log</h3>
+                <h3>Create New Project</h3>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>Username: </label>
@@ -114,9 +160,28 @@ export default class DisplayUser extends Component {
                             })
                         }
                         </select>
+                        <input type='button' value="choose user" className="btn btn-primary" onClick={this.onSubmitUser}></input>
                     </div>
                     <div className="form-group">
                         <label>Class: </label>
+                        <select ref={this.ref2}
+                        
+                        className="form-control"
+                        value={this.state.class}
+                        onChange={this.onChangeClass}>
+                        {
+                                this.state.classes.map(function(clas) {
+                                    return <option
+                                        key={clas}
+                                        value={clas}>{clas}
+                                        </option>;
+                                })
+
+                        }
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label>Project Name: </label>
                         <input type="text"
                             required
                             className="form-control"
@@ -143,11 +208,11 @@ export default class DisplayUser extends Component {
                         </div>
                     </div>
                     <div className="form-group">
-                        <input type="submit" value="Create Exercise Log" className="btn btn-primary" />
+                        <input type="submit" value="Create Project" className="btn btn-primary" />
                     </div>
                 </form>
                 <div>
-                    <Display />
+                    <Display /> 
                 </div>
             </div>
         )

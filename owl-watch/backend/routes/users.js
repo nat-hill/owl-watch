@@ -42,6 +42,22 @@ router.route('/:userid').get((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
+// Gets any User_id via username
+
+router.route('/username/:username').get((req, res) => {
+  User.find({username: req.params.username})
+    .then(users => res.json(users[0]._id))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+// gets classes by username
+router.route('/username_classes/:username').get((req, res) => {
+  User.find({username: req.params.username})
+    .then(users => res.json(users[0].classes))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
+
+
 
 //Deletes any User via _ID
 
@@ -155,7 +171,26 @@ router.route('/get_class/:userid/:classid').get((req, res) => {
   .catch(err => res.status(400).json('Error: ' + err));
 });
 
+//adds a project by user id and class id
 
+// router.route('/add_project/:userid/:classid').get((req, res) => {
+//   User.findById(req.params.userid)
+//   .then(User => {
+//     const classes = User.classes
+//     for(let i = 0; i < classes.length; i++){
+//       if(classes[i]._id == req.params.classid){
+//         User.classes[i].update()
+//       }
+
+//     }
+    
+//   })
+//   .catch(err => res.status(400).json('Error: ' + err));
+//   User.update(
+//     {"_id": req.params.userid, "classes._id": req.params.classid}, 
+//     {'$push':
+//         })
+// });
 
 
 module.exports = router;

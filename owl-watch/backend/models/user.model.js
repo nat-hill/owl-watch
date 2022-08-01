@@ -7,7 +7,7 @@ const projectSchema = new Schema ({
     type : String,
 
   },
-  hoursSpent: {Number}
+  timeSpent: {Number}
 })
 
 const classSchema = new Schema ({
