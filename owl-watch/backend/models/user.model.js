@@ -7,7 +7,7 @@ const projectSchema = new Schema ({
     type : String,
 
   },
-  timeSpent: {Number}
+  projectTimeSpent: Number
 })
 
 const classSchema = new Schema ({
@@ -16,7 +16,7 @@ const classSchema = new Schema ({
     type: [projectSchema],
     required: false
   },
-  timeSpent: Number
+  classTimeSpent: Number
 })
 
 const userSchema = new Schema({

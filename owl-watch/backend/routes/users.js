@@ -49,6 +49,7 @@ router.route('/username/:username').get((req, res) => {
     .then(users => res.json(users[0]._id))
     .catch(err => res.status(400).json('Error: ' + err));
 });
+
 // gets classes by username
 router.route('/username_classes/:username').get((req, res) => {
   User.find({username: req.params.username})
@@ -118,14 +119,16 @@ router.route('/get_classes/:userid').get((req, res) => {
 // get projects in class by user and class id
 // returns [ProjectSchema]
 
+// this route does not work
+
 router.route('/get_projects/:userid/:classid').get((req, res) => {
   User.findById(req.params.userid)
   .then(User => {
     const subDocs = User.$getAllSubdocs()
     const projects = []
     for (let i = 0; i < subDocs.length; i++){
-      if (subDocs[i].$parent() != undefined){
-        if(subDocs[i].$parent()._id == req.params.classid){
+      if (subDocs[i].$parent() !== undefined){
+        if(subDocs[i].$parent()._id === req.params.classid){
           projects[projects.length] = subDocs[i]
         }
       }
@@ -146,7 +149,7 @@ router.route('/get_classTime/:userid').get((req, res) => {
     const times = []
     for(let i = 0; i < classes.length; i++){
 
-      times[times.length] = [classes[i].className, classes[i].timeSpent]
+      times[times.length] = [classes[i].className, classes[i].classTimeSpent]
 
     }
     return res.json(times)
@@ -164,33 +167,51 @@ router.route('/get_class/:userid/:classid').get((req, res) => {
       if(classes[i]._id == req.params.classid){
         return res.json(classes[i])
       }
-
     }
-    
   })
   .catch(err => res.status(400).json('Error: ' + err));
 });
 
-//adds a project by user id and class id
 
-// router.route('/add_project/:userid/:classid').get((req, res) => {
-//   User.findById(req.params.userid)
-//   .then(User => {
-//     const classes = User.classes
-//     for(let i = 0; i < classes.length; i++){
-//       if(classes[i]._id == req.params.classid){
-//         User.classes[i].update()
-//       }
+// adds project by username and className
+router.route('/add_project').post((req, res) => {
+  User.updateOne(
+    {"username" : req.body.username, "classes.className" : req.body.className},
+    {$push: 
+      {'classes.$.projects':
+        {
+          'projectName' : req.body.projectName, 
+          'projectTimeSpent' : req.body.projectTimeSpent
+        }
+      }
+    })
+    .then(() => res.json(req.body.projectName + " added"))
+    .catch(err => res.status(400).json('Error:' + err));
+});
 
-//     }
-    
-//   })
-//   .catch(err => res.status(400).json('Error: ' + err));
-//   User.update(
-//     {"_id": req.params.userid, "classes._id": req.params.classid}, 
-//     {'$push':
-//         })
-// });
+
+// adds a class by username
+
+router.route('/add_class').post((req, res) => {
+  User.updateOne(
+    {"username" : req.body.username},
+    {$push: 
+      {'classes':
+        {
+          "className": req.body.className,
+          "classTimeSpent": 0,
+          "projects": []
+        }
+      }
+    }
+  )
+    .then(() => res.json(req.body.className + " added"))
+    .catch(err => res.status(400).json('Error:' + err));
+});
+
+
+
+
 
 
 module.exports = router;
