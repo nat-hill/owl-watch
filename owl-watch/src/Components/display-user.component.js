@@ -3,6 +3,7 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Display from "../pages/display.js";
+import CreateClass from './CreateClass';
 //import User from "user.model.js"
 
 
@@ -81,16 +82,7 @@ export default class DisplayUser extends Component {
     }
 
     onSubmit(e) {
-        e.preventDefault();
-
-        const user = {
-            username: this.state.username,
-            class: this.state.class,
-            duration: this.state.duration,
-            date: this.state.date,
-            projectName: this.state.projectName
-        };
-        console.log(user);
+       
 
 
         axios({
@@ -209,9 +201,16 @@ export default class DisplayUser extends Component {
                     </div>
                 </form>
                 <div>
+                    <CreateClass />
+                </div>
+                <div>
                     <Display /> 
                 </div>
             </div>
+
+            
+
+            
         )
     }
 }
