@@ -10,8 +10,8 @@ import Display from "../pages/display.js";
 export default class DisplayUser extends Component {
     constructor(props) {
         super(props);
-        this.myRef = React.createRef();
-        this.ref2 = React.createRef();
+        // this.myRef = React.createRef();
+        // this.ref2 = React.createRef();
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeClass = this.onChangeClass.bind(this);
@@ -90,29 +90,26 @@ export default class DisplayUser extends Component {
             date: this.state.date,
             projectName: this.state.projectName
         };
-
-        
-        
-
-            
-        
-        
         console.log(user);
-        
 
-        // TODO set up a proper update_classes post request
-        
-        //axios.post('http://localhost:3002/users/update_classes/:userid', user)
-        //    .then(res => console.log(res.data));
-        
 
-        //window.location = '/display';
+        axios({
+            method: 'post',
+            url:'http://localhost:3002/users/add_project',
+            headers: {}, 
+            data: {
+                username: this.state.username,
+                className: this.state.class,
+                projectName: this.state.projectName,
+                projectTimeSpent: this.state.duration
+            }})
 
         this.setState({
             username: '',
             class: '',
             duration:0,
-            date: ''
+            date: '',
+            projectName : ''
         })
     }
 
@@ -137,6 +134,8 @@ export default class DisplayUser extends Component {
         });
     }
 
+ //ref={this.myRef} required className="form-control"
+
     
     //TODO EVENTUALLY: add stopwatch feature as well
     render() {
@@ -146,9 +145,7 @@ export default class DisplayUser extends Component {
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>Username: </label>
-                        <select ref={this.myRef}
-                        required
-                        className="form-control"
+                        <select 
                         value={this.state.username}
                         onChange={this.onChangeUsername}>
                         {
@@ -185,8 +182,8 @@ export default class DisplayUser extends Component {
                         <input type="text"
                             required
                             className="form-control"
-                            value={this.state.onChangeClass}
-                            onChange={this.onChangeClass}
+                            value={this.state.projectName}
+                            onChange={this.onChangeProjectName}
                             />
                     </div>
                     <div className="form-group">

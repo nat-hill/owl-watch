@@ -119,8 +119,9 @@ router.route('/get_classes/:userid').get((req, res) => {
 // get projects in class by user and class id
 // returns [ProjectSchema]
 
-// this route does not work
-
+// THIS DOES NOT WORK RIGHT NOW
+// THIS DOES NOT WORK RIGHT NOW
+// THIS DOES NOT WORK RIGHT NOW
 router.route('/get_projects/:userid/:classid').get((req, res) => {
   User.findById(req.params.userid)
   .then(User => {
@@ -164,7 +165,7 @@ router.route('/get_class/:userid/:classid').get((req, res) => {
   .then(User => {
     const classes = User.classes
     for(let i = 0; i < classes.length; i++){
-      if(classes[i]._id == req.params.classid){
+      if(classes[i]._id === req.params.classid){
         return res.json(classes[i])
       }
     }
@@ -208,9 +209,6 @@ router.route('/add_class').post((req, res) => {
     .then(() => res.json(req.body.className + " added"))
     .catch(err => res.status(400).json('Error:' + err));
 });
-
-
-
 
 
 
