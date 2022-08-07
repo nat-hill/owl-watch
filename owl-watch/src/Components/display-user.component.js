@@ -3,7 +3,6 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Display from "../pages/display.js";
-import CreateClass from './CreateClass';
 //import User from "user.model.js"
 
 
@@ -11,8 +10,9 @@ import CreateClass from './CreateClass';
 export default class DisplayUser extends Component {
     constructor(props) {
         super(props);
-        // this.myRef = React.createRef();
-        // this.ref2 = React.createRef();
+        this.myRef = React.createRef();
+        this.ref2 = React.createRef();
+        this.ref3 = React.createRef();
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeClass = this.onChangeClass.bind(this);
@@ -29,7 +29,9 @@ export default class DisplayUser extends Component {
             date: new Date(),
             users: [],
             classes: [],
-            projectName: ''
+            projectName: '',
+            projects: ['project1','project2','project3'],
+            activeElementType: "dropdown"
         }
     }
 
@@ -82,27 +84,33 @@ export default class DisplayUser extends Component {
     }
 
     onSubmit(e) {
-       
+        e.preventDefault();
 
+        const user = {
+            username: this.state.username,
+            class: this.state.class,
+            duration: this.state.duration,
+            date: this.state.date,
+            projectName: this.state.projectName
+        };
+        
+        console.log(user);
+        
 
-        axios({
-            method: 'post',
-            url:'http://localhost:3002/users/add_project',
-            headers: {}, 
-            data: {
-                username: this.state.username,
-                className: this.state.class,
-                projectName: this.state.projectName,
-                projectTimeSpent: this.state.duration
-            }})
+        // TODO set up proper update_project and update_projectTime post requests
+        
+        // axios.post('http://localhost:3002/users/update_classes/:userid', user)
+        //    .then(res => console.log(res.data));
+        
 
-        this.setState({
-            username: '',
-            class: '',
-            duration:0,
-            date: '',
-            projectName : ''
-        })
+        window.location = '/display';
+
+        // this.setState({
+        //     username: '',
+        //     class: '',
+        //     duration:0,
+        //     date: ''
+        // })
     }
 
     onSubmitUser(e){
@@ -125,19 +133,61 @@ export default class DisplayUser extends Component {
             console.log(err)
         });
     }
+    
+    projectDropDownChanged(e){
+        if (e.target.value === "custom") {
+            this.setState({ activeElementType: "input" });
+          }
+    }
 
- //ref={this.myRef} required className="form-control"
+    bothChanges(){
+        e => this.projectDropDownChanged(e)
+        this.onChangeProjectName
+    }
+
+    projectDropDownComp() {
+        return(
+            <select ref={this.ref3}
+                className="form-control"
+                value={this.state.projectName}
+                onChange={bothChanges}
+                placeholder="Select Project...">
+                {
+                        this.state.projects.map(function(p) {
+                            return <option
+                                key={p}
+                                value={p}>{p}
+                                </option>;
+                        })
+                }
+                <option key='custom' value='custom'>Type Your Own</option>
+            </select>
+        )
+    }
+
+    projectInputFieldComp() {
+        return(
+            <input type="text"
+            required
+            className="form-control"
+            value={this.state.projectName}
+            onChange={this.onChangeProjectName}
+            />
+        )
+    }
 
     
     //TODO EVENTUALLY: add stopwatch feature as well
     render() {
         return (
             <div>
-                <h3>Create New Project</h3>
+                <h3>Log Time for Project</h3>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>Username: </label>
-                        <select 
+                        <select ref={this.myRef}
+                        required
+                        className="form-control"
                         value={this.state.username}
                         onChange={this.onChangeUsername}>
                         {
@@ -154,7 +204,6 @@ export default class DisplayUser extends Component {
                     <div className="form-group">
                         <label>Class: </label>
                         <select ref={this.ref2}
-                        
                         className="form-control"
                         value={this.state.class}
                         onChange={this.onChangeClass}>
@@ -169,15 +218,14 @@ export default class DisplayUser extends Component {
                         }
                         </select>
                     </div>
+
                     <div className="form-group">
-                        <label>Project Name: </label>
-                        <input type="text"
-                            required
-                            className="form-control"
-                            value={this.state.projectName}
-                            onChange={this.onChangeProjectName}
-                            />
-                    </div>
+                        <label>Project: </label>
+                        {this.state.activeElementType === "dropdown"
+                            ? this.projectDropDownComp()
+                            : this.projectInputFieldComp()}
+                        </div>
+
                     <div className="form-group">
                         <label>Duration (in minutes): </label>
                         <input
@@ -201,16 +249,9 @@ export default class DisplayUser extends Component {
                     </div>
                 </form>
                 <div>
-                    <CreateClass />
-                </div>
-                <div>
                     <Display /> 
                 </div>
             </div>
-
-            
-
-            
         )
     }
 }
