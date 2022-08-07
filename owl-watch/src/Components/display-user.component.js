@@ -94,7 +94,19 @@ export default class DisplayUser extends Component {
                 className: this.state.class,
                 projectName: this.state.projectName,
                 projectTimeSpent: this.state.duration
-            }})
+            }});
+
+        axios({
+            method: 'post',
+            url:'http://localhost:3002/users/update_classTimeSpent',
+            headers: {}, 
+            data: {
+                username: this.state.username,
+                className: this.state.class,
+                projectName: this.state.projectName,
+                projectTimeSpent: this.state.duration
+            }});
+        
 
         this.setState({
             username: '',
@@ -126,7 +138,7 @@ export default class DisplayUser extends Component {
         });
     }
 
- //ref={this.myRef} required className="form-control"
+
 
     
     //TODO EVENTUALLY: add stopwatch feature as well

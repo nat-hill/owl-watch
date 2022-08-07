@@ -190,6 +190,22 @@ router.route('/add_project').post((req, res) => {
     .catch(err => res.status(400).json('Error:' + err));
 });
 
+// updates a classTimeSpent by projectTimeSpent
+router.route('/update_classTimeSpent').post((req,res) => {
+  User.updateOne(
+    {"username" : req.body.username, "classes.className" : req.body.className},
+    {$inc:
+      {
+       "classes.$.classTimeSpent":  req.body.projectTimeSpent
+      }
+    }
+  )
+  .then(() => res.json(req.body.className + " updated"))
+  .catch(err => res.status(400).json('Error:' + err))
+});
+
+
+
 
 // adds a class by username
 
@@ -207,6 +223,22 @@ router.route('/add_class').post((req, res) => {
     }
   )
     .then(() => res.json(req.body.className + " added"))
+    .catch(err => res.status(400).json('Error:' + err));
+});
+
+
+
+// Updates a classes project time 
+
+router.route('/updatetime').post((req, res) => {
+  User.updateOne(
+    {"username" : req.body.username, "classes.className" : req.body.className, "classes.projects.projectName": req.body.projectName},
+    {$set:
+      {'projects.$.projectTimeSpent': req.body.projectTimeSpent
+        
+      }
+    })
+    .then(() => res.json(req.body.projectName + " updated"))
     .catch(err => res.status(400).json('Error:' + err));
 });
 
