@@ -20,7 +20,10 @@ export default class DisplayUser extends Component {
         this.onChangeDate = this.onChangeDate.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.onChangeProjectName = this.onChangeProjectName.bind(this);
-        this.onSubmitUser = this.onSubmitUser.bind(this)
+        this.onSubmitUser = this.onSubmitUser.bind(this);
+        this.projectDropDownChanged = this.projectDropDownChanged.bind(this);
+        this.projectDropDownComp = this.projectDropDownComp.bind(this);
+        this.projectInputFieldComp = this.projectInputFieldComp.bind(this);
 
         this.state = {
             username: '',
@@ -86,31 +89,37 @@ export default class DisplayUser extends Component {
     onSubmit(e) {
         e.preventDefault();
 
+        if (this.state.projects.indexOf(this.state.projectName) === -1) {
+            this.state.projects.push(this.state.projectName)
+        }
+
         const user = {
             username: this.state.username,
             class: this.state.class,
             duration: this.state.duration,
             date: this.state.date,
             projectName: this.state.projectName
+            //TODO: set up projects (an array of strings) as part of the user schema. Then, implement an update_projects post request
         };
         
         console.log(user);
         
 
         // TODO set up proper update_project and update_projectTime post requests
-        
+        // this code is what the future post request might look like:
+
         // axios.post('http://localhost:3002/users/update_classes/:userid', user)
         //    .then(res => console.log(res.data));
         
 
         window.location = '/display';
 
-        // this.setState({
-        //     username: '',
-        //     class: '',
-        //     duration:0,
-        //     date: ''
-        // })
+        this.setState({
+            username: '',
+            class: '',
+            duration:0,
+            date: ''
+        })
     }
 
     onSubmitUser(e){
@@ -140,17 +149,19 @@ export default class DisplayUser extends Component {
           }
     }
 
-    bothChanges(){
-        e => this.projectDropDownChanged(e)
-        this.onChangeProjectName
-    }
+    // bothProjectChanges(e){
+    //     this.projectDropDownChanged
+    //     // e => this.projectDropDownChanged(e)
+    //     this.onChangeProjectName
+    // }
 
     projectDropDownComp() {
         return(
             <select ref={this.ref3}
                 className="form-control"
                 value={this.state.projectName}
-                onChange={bothChanges}
+                onInput={this.projectDropDownChanged}
+                onChange={this.onChangeProjectName}
                 placeholder="Select Project...">
                 {
                         this.state.projects.map(function(p) {
