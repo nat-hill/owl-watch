@@ -3,7 +3,6 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Display from "../pages/display.js";
-import CreateClass from './CreateClass';
 //import User from "user.model.js"
 
 
@@ -11,8 +10,9 @@ import CreateClass from './CreateClass';
 export default class DisplayUser extends Component {
     constructor(props) {
         super(props);
-        // this.myRef = React.createRef();
-        // this.ref2 = React.createRef();
+        this.myRef = React.createRef();
+        this.ref2 = React.createRef();
+        this.ref3 = React.createRef();
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeClass = this.onChangeClass.bind(this);
@@ -20,7 +20,10 @@ export default class DisplayUser extends Component {
         this.onChangeDate = this.onChangeDate.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.onChangeProjectName = this.onChangeProjectName.bind(this);
-        this.onSubmitUser = this.onSubmitUser.bind(this)
+        this.onSubmitUser = this.onSubmitUser.bind(this);
+        this.projectDropDownChanged = this.projectDropDownChanged.bind(this);
+        this.projectDropDownComp = this.projectDropDownComp.bind(this);
+        this.projectInputFieldComp = this.projectInputFieldComp.bind(this);
 
         this.state = {
             username: '',
@@ -29,7 +32,9 @@ export default class DisplayUser extends Component {
             date: new Date(),
             users: [],
             classes: [],
-            projectName: ''
+            projectName: '',
+            projects: ['project1','project2','project3'],
+            activeElementType: "dropdown"
         }
     }
 
@@ -82,38 +87,38 @@ export default class DisplayUser extends Component {
     }
 
     onSubmit(e) {
-       
+        e.preventDefault();
 
+        if (this.state.projects.indexOf(this.state.projectName) === -1) {
+            this.state.projects.push(this.state.projectName)
+        }
 
-        axios({
-            method: 'post',
-            url:'http://localhost:3002/users/add_project',
-            headers: {}, 
-            data: {
-                username: this.state.username,
-                className: this.state.class,
-                projectName: this.state.projectName,
-                projectTimeSpent: this.state.duration
-            }});
-
-        axios({
-            method: 'post',
-            url:'http://localhost:3002/users/update_classTimeSpent',
-            headers: {}, 
-            data: {
-                username: this.state.username,
-                className: this.state.class,
-                projectName: this.state.projectName,
-                projectTimeSpent: this.state.duration
-            }});
+        const user = {
+            username: this.state.username,
+            class: this.state.class,
+            duration: this.state.duration,
+            date: this.state.date,
+            projectName: this.state.projectName
+            //TODO: set up projects (an array of strings) as part of the user schema. Then, implement an update_projects post request
+        };
         
+        console.log(user);
+        
+
+        // TODO set up proper update_project and update_projectTime post requests
+        // this code is what the future post request might look like:
+
+        // axios.post('http://localhost:3002/users/update_classes/:userid', user)
+        //    .then(res => console.log(res.data));
+        
+
+        window.location = '/display';
 
         this.setState({
             username: '',
             class: '',
             duration:0,
-            date: '',
-            projectName : ''
+            date: ''
         })
     }
 
@@ -137,19 +142,63 @@ export default class DisplayUser extends Component {
             console.log(err)
         });
     }
+    
+    projectDropDownChanged(e){
+        if (e.target.value === "custom") {
+            this.setState({ activeElementType: "input" });
+          }
+    }
 
+    // bothProjectChanges(e){
+    //     this.projectDropDownChanged
+    //     // e => this.projectDropDownChanged(e)
+    //     this.onChangeProjectName
+    // }
 
+    projectDropDownComp() {
+        return(
+            <select ref={this.ref3}
+                className="form-control"
+                value={this.state.projectName}
+                onInput={this.projectDropDownChanged}
+                onChange={this.onChangeProjectName}
+                placeholder="Select Project...">
+                {
+                        this.state.projects.map(function(p) {
+                            return <option
+                                key={p}
+                                value={p}>{p}
+                                </option>;
+                        })
+                }
+                <option key='custom' value='custom'>Type Your Own</option>
+            </select>
+        )
+    }
+
+    projectInputFieldComp() {
+        return(
+            <input type="text"
+            required
+            className="form-control"
+            value={this.state.projectName}
+            onChange={this.onChangeProjectName}
+            />
+        )
+    }
 
     
     //TODO EVENTUALLY: add stopwatch feature as well
     render() {
         return (
             <div>
-                <h3>Create New Project</h3>
+                <h3>Log Time for Project</h3>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>Username: </label>
-                        <select 
+                        <select ref={this.myRef}
+                        required
+                        className="form-control"
                         value={this.state.username}
                         onChange={this.onChangeUsername}>
                         {
@@ -166,7 +215,6 @@ export default class DisplayUser extends Component {
                     <div className="form-group">
                         <label>Class: </label>
                         <select ref={this.ref2}
-                        
                         className="form-control"
                         value={this.state.class}
                         onChange={this.onChangeClass}>
@@ -181,15 +229,14 @@ export default class DisplayUser extends Component {
                         }
                         </select>
                     </div>
+
                     <div className="form-group">
-                        <label>Project Name: </label>
-                        <input type="text"
-                            required
-                            className="form-control"
-                            value={this.state.projectName}
-                            onChange={this.onChangeProjectName}
-                            />
-                    </div>
+                        <label>Project: </label>
+                        {this.state.activeElementType === "dropdown"
+                            ? this.projectDropDownComp()
+                            : this.projectInputFieldComp()}
+                        </div>
+
                     <div className="form-group">
                         <label>Duration (in minutes): </label>
                         <input
@@ -213,16 +260,9 @@ export default class DisplayUser extends Component {
                     </div>
                 </form>
                 <div>
-                    <CreateClass />
-                </div>
-                <div>
                     <Display /> 
                 </div>
             </div>
-
-            
-
-            
         )
     }
 }
