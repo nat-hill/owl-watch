@@ -45,8 +45,8 @@ router.route('/:userid').get((req, res) => {
 // Gets any User_id via username
 
 router.route('/username/:username').get((req, res) => {
-  User.find({username: req.params.username})
-    .then(users => res.json(users[0]._id))
+  User.findOne({username: req.params.username})
+    .then(user => res.json(user))
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
@@ -122,22 +122,22 @@ router.route('/get_classes/:userid').get((req, res) => {
 // THIS DOES NOT WORK RIGHT NOW
 // THIS DOES NOT WORK RIGHT NOW
 // THIS DOES NOT WORK RIGHT NOW
-router.route('/get_projects/:userid/:classid').get((req, res) => {
-  User.findById(req.params.userid)
-  .then(User => {
-    const subDocs = User.$getAllSubdocs()
-    const projects = []
-    for (let i = 0; i < subDocs.length; i++){
-      if (subDocs[i].$parent() !== undefined){
-        if(subDocs[i].$parent()._id === req.params.classid){
-          projects[projects.length] = subDocs[i]
-        }
-      }
-    }
-    return res.json(projects)
-  })
-  .catch(err => res.status(400).json('Error: ' + err));
-});
+// router.route('/get_projects/:userid/:classid').get((req, res) => {
+//   User.findById(req.params.userid)
+//   .then(User => {
+//     const subDocs = User.$getAllSubdocs()
+//     const projects = []
+//     for (let i = 0; i < subDocs.length; i++){
+//       if (subDocs[i].$parent() !== undefined){
+//         if(subDocs[i].$parent()._id === req.params.classid){
+//           projects[projects.length] = subDocs[i]
+//         }
+//       }
+//     }
+//     return res.json(projects)
+//   })
+//   .catch(err => res.status(400).json('Error: ' + err));
+// });
 
 
 // get classes timeSpent 
@@ -241,6 +241,37 @@ router.route('/updatetime').post((req, res) => {
     .then(() => res.json(req.body.projectName + " updated"))
     .catch(err => res.status(400).json('Error:' + err));
 });
+
+// gets all projects of a user to display on cards
+// [ [className1, projectName1, projectTimeSpent1], [className2, projectName2, projectTimeSpent2]  ]
+
+router.route('/get_projects/:username').get((req, res) => {
+  User.findOne({username: req.params.username})
+    .then(user =>  {
+      const classes = user.classes
+      const projects = []
+      for (let i = 0; i < classes.length; i++){
+        
+        for (let j = 0; j < classes[i].projects.length; j++){
+          projects[projects.length] = [classes[i].className, classes[i].projects[j].projectName, classes[i].projects[j].projectTimeSpent]
+        }
+      }
+      return res.json(projects)
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
+
+
+
+/// gets projects' names in a class
+// TODO
+
+
+// gets projects' timespent in a class
+// // returns [ [projectName1, timeSpent1], [projectName2, timeSpent2], ... ] 
+// TODO
+
 
 
 
