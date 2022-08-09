@@ -1,0 +1,14 @@
+.timer {
+    font-size: 140px;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 50px;
+
+    span {
+        display: inline-block;
+        width: 1.4em;
+    }
+    span:last-child {
+        width: 0.7em;
+    }
+}

@@ -1,9 +1,9 @@
 import './App.css';
 
 import Navbar from './Components/Navbar';
-
 import Home from './pages/home';
 import Update from './pages/update';
+import Record from './pages/stopwatch/record';
 import Add from './pages/add';
 import Display from './Components/display-user.component.js';
 import About from './pages/about';
@@ -20,7 +20,9 @@ function App() {
       case "/update":
         component = <Update />
         break
-
+      case "/record":
+        component = <Record />
+        break
       case "/add":
         component = <Add />
         break
